@@ -20,6 +20,8 @@
     --color-imaginary: #f3e13b;  /* 虛數屬性 */
     --color-quantum: #5b57bd;    /* 量子屬性 */
 
+    --button-height: 48px;
+
     --cursor: url('../img/cursor.png'), auto;
 }
 
@@ -29,14 +31,29 @@
     user-select: none;
 }
 
-*::-webkit-scrollbar-track {
-    background: transparent;
+body {
+    --scrollbar-color-thumb: rgba(255, 255, 255,.5);
+    --scrollbar-color-track: transparent;
+    --scrollbar-width: thin;
+    --scrollbar-width-number: 6px;
+    scrollbar-width: none;
 }
 
-*::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, .5);
-    border-radius: 4px;
-    width: 4px;
+
+body *::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-color-thumb);
+    border-radius: calc(var(--scrollbar-width-number) / 2);
+}
+body *::-webkit-scrollbar-track {
+    background: var(--scrollbar-color-track);
+    border-radius: calc(var(--scrollbar-width-number) / 2);
+}
+body *::-webkit-scrollbar {
+    max-width: var(--scrollbar-width-number);
+    max-height: var(--scrollbar-width-number);
+}
+body *::-webkit-scrollbar-button{
+    display: none;
 }
 
 html,
@@ -1035,7 +1052,7 @@ textarea {
 .skill-desc {
     line-height: 1.8;
     color: #e2ebfa;
-    font-weight: bold;
+    font-weight: 400;
     font-size: 16px;
     white-space: pre-wrap;
     word-break: break-word;
@@ -1201,7 +1218,9 @@ textarea {
 
 .form-row textarea {
     min-height: 120px;
-    resize: vertical
+    resize: none;
+    field-sizing: content;
+    font-weight: 400;
 }
 
 .filebox {
@@ -1239,10 +1258,10 @@ textarea {
 
 .edit-actions button {
     position: relative;
-    height: 36px;
+    height: var(--button-height);
     background-color: #e3e3e1;
     padding: 8px;
-    border-radius: 18px;
+    border-radius: calc(var(--button-height) / 2);
     border: 0px;
     outline: 0px solid #fff;
     font-weight: bold;
@@ -1268,10 +1287,10 @@ textarea {
 .edit-actions button::before{
     content: '';
     position: absolute;
-    height: 28px;
+    height: calc(var(--button-height) - 8px);
     width: calc(100% - 8px);
     background: transparent;
-    border-radius: 18px;
+    border-radius: calc(var(--button-height) / 2);
     border: 1px solid #aaaaa9;
     transition: all 0.15s cubic-bezier(.4,0,.2,1);
 }
@@ -1493,10 +1512,10 @@ textarea {
 
 .modal-actions button {
     position: relative;
-    height: 36px;
+    height: var(--button-height);
     background-color: #e3e3e1;
     padding: 4px;
-    border-radius: 18px;
+    border-radius: calc(var(--button-height) / 2);
     border: 0px;
     outline: 0px solid #fff;
     font-weight: bold;
@@ -1523,10 +1542,10 @@ textarea {
 .modal-card button::before{
     content: '';
     position: absolute;
-    height: 28px;
+    height: calc(var(--button-height) - 8px);
     width: calc(100% - 8px);
     background: transparent;
-    border-radius: 18px;
+    border-radius: calc(var(--button-height) / 2);
     border: 1px solid #aaaaa9;
     transition: all 0.15s cubic-bezier(.4,0,.2,1);
 }
@@ -1591,7 +1610,7 @@ button .x, button .v{
     font-size: 14px;
     color: rgba(0, 0, 0, 0.75);
     font-weight: 600;
-    margin: 12px 35px 6px 45px !important;
+    margin: 32px 35px 6px 45px !important;
     text-align: left;
 }
 
@@ -1608,11 +1627,12 @@ button .x, button .v{
 .import-preview-card {
     background: rgba(0, 0, 0, 0.05);
     border: 1px solid rgba(0, 0, 0, 0.16);
-    border-radius: 12px;
+    border-radius: 999px;
     padding: 10px 16px;
     display: flex;
     align-items: center;
     transition: all 0.15s ease;
+    margin: 20px 0 !important;
 }
 
 .import-preview-card:hover {
