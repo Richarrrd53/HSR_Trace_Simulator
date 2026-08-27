@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>星穹鐵道・行跡編輯器</title>
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="preload" as="image" href="./img/BG.png">
+  <link rel="preload" as="image" href="./img/Path_Destruction.webp">
+  <link rel="preload" as="image" href="./img/Path_The_Hunt.webp">
+  <link rel="preload" as="image" href="./img/Path_Erudition.webp">
+  <link rel="preload" as="image" href="./img/Path_Harmony.webp">
+  <link rel="preload" as="image" href="./img/Path_Nihility.webp">
+  <link rel="preload" as="image" href="./img/Path_Preservation.webp">
+  <link rel="preload" as="image" href="./img/Path_Abundance.webp">
+  <link rel="preload" as="image" href="./img/Path_Remembrance.webp">
+  <link rel="preload" as="image" href="./img/Path_Elation.webp">
+  <link rel="preload" as="image" href="./img/Icon_Path_Destruction_Medium.webp">
+  <link rel="preload" as="image" href="./img/Icon_Path_The_Hunt_Medium.webp">
+  <link rel="preload" as="image" href="./img/Icon_Path_Erudition_Medium.webp">
+  <link rel="preload" as="image" href="./img/Icon_Path_Harmony_Medium.webp">
+  <link rel="preload" as="image" href="./img/Icon_Path_Nihility_Medium.webp">
+  <link rel="preload" as="image" href="./img/Icon_Path_Preservation_Medium.webp">
+  <link rel="preload" as="image" href="./img/Icon_Path_Abundance_Medium.webp">
+  <link rel="preload" as="image" href="./img/Icon_Path_Remembrance_Medium.webp">
+  <link rel="preload" as="image" href="./img/Icon_Path_Elation_Medium.webp">
+  <link rel="preload" as="audio" href="./sound/click.mp3">
+  <link rel="preload" as="audio" href="./sound/cancel.mp3">
+  <link rel="preload" as="audio" href="./sound/node.mp3">
+  <link rel="icon" type="image/x-icon" href="./img/logo.webp">
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><img src="./img/brand.png" alt="">行跡模擬器</div>
+      <div class="character-tabs" id="characterTabs"></div>
+      <button id="addCharacterBtn" class="add-char-btn" title="新增角色">＋角色</button>
+      <div class="spacer"></div>
+      <div class="path-tag" id="pathTag">毀滅</div>
+    </header>
+
+    <div class="toolbar">
+      <div class="group" style="display: none !important;">
+        <button id="editSelectedBtn">編輯所選技能</button>
+        <label>背景圖<input id="bgUpload" type="file" accept="image/*" hidden></label>
+      </div>
+      <div class="group">
+        <div class="dropdown-wrapper" id="exportDropdown">
+          <button id="exportBtn" class="dropdown-btn" type="button">
+            <span>匯出 JSON</span>
+            <svg class="dropdown-arrow" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="dropdown-menu" id="exportMenu">
+            <button type="button" class="dropdown-item" id="exportCurrentBtn">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              <span>匯出當前角色</span>
+            </button>
+            <button type="button" class="dropdown-item" id="exportAllBtn">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              <span>匯出全部</span>
+            </button>
+          </div>
+        </div>
+        <label>匯入 JSON<input id="importInput" type="file" accept=".json,application/json" hidden></label>
+      </div>
+      <div class="sep"></div>
+      <button id="resetLayoutBtn">重設此命途排布</button>
+      <div class="status" id="status" style="display: none !important;">點擊節點查看；點擊背景收起面板</div>
+    </div>
+
+    <main class="workspace">
+      <section class="tree" id="tree">
+        <div class="trace-group" id="traceGroup">
+          <div class="tgbg">
+            <div class="tgbg-1"></div>
+            <div class="tgbg-2"></div>
+            <img class="path-icon" id="path-icon" src="./img/Path_Destruction.webp" alt="">
+            <div class="tgbg-3"></div>
+            <div class="tgbg-4"></div>
+            <div class="tgbg-5"></div>
+            <div class="tgbg-6"></div>
+            <div class="tgbg-7"></div>
+            <div class="tgbg-8"></div>
+          </div>
+          <svg class="lines" id="lines" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="corner-hint" style="display: none !important;">點擊節點查看技能；未選取時行跡置中，選取時向左移動。</div>
+      </section>
+
+      <aside class="drawer" id="drawer">
+        <div class="drawer-tabs">
+          <button id="viewTab" class="active">技能資訊</button>
+          <button id="editTab">編輯技能</button>
+        </div>
+        <div class="drawer-body" id="viewPane"></div>
+        <div class="drawer-body hidden" id="editPane"></div>
+      </aside>
+
+      <div class="character-modal" id="characterModal">
+        <div class="modal-card">
+          <h3>新增角色</h3>
+          <hr>
+          <div class="form-row">
+            <label>角色名稱</label>
+            <input id="newCharacterName" placeholder="例如：自訂角色 A">
+          </div>
+          <div class="form-row">
+            <label>命途</label>
+            <select id="newCharacterPath"></select>
+          </div>
+          <div class="modal-actions">
+            <button id="cancelAddCharacter"><span class="x"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracurrentColorerCarrier" stroke-linecurrentcap="round" stroke-linejoin="round"></g><g id="SVGRepo_icurrentColoronCarrier"> <path fill-rule="evenodd" currentclip-rule="evenodd" d="M10.9393 12L6.9696 15.9697L8.03026 17.0304L12 13.0607L15.9697 17.0304L17.0304 15.9697L13.0607 12L17.0303 8.03039L15.9696 6.96973L12 10.9393L8.03038 6.96973L6.96972 8.03039L10.9393 12Z" fill="currentColor"></path> </g></svg></span>取消</button>
+            <button id="confirmAddCharacter"><span class="v"><svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64px" height="64px" viewBox="0 0 335.765 335.765" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracurrentColorerCarrier" stroke-linecurrentcap="round" stroke-linejoin="round"></g><g id="SVGRepo_icurrentColoronCarrier"> <g> <g> <polygon points="311.757,41.803 107.573,245.96 23.986,162.364 0,186.393 107.573,293.962 335.765,65.795 "></polygon> </g> </g> </g></svg></span>建立角色</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 拖曳提示蒙版 (Drag Overlay) -->
+      <div class="drag-overlay" id="dragOverlay">
+        <div class="drag-card">
+          <svg class="drag-icon-svg" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <div class="drag-card-title">放開以匯入角色</div>
+          <div class="drag-card-desc">將 JSON 檔案拖曳至此處以新增角色資料</div>
+        </div>
+      </div>
+
+      <!-- 匯入確認彈窗 (Import Confirm Modal) -->
+      <div class="character-modal" id="importConfirmModal">
+        <div class="modal-card">
+          <h3>匯入角色資料確認</h3>
+          <hr>
+          <div class="import-hint-text">偵測到以下角色資料，是否確認加入角色列表？</div>
+          <div class="import-preview-list" id="importPreviewList"></div>
+          <div class="modal-actions">
+            <button id="cancelImportConfirm"><span class="x"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracurrentColorerCarrier" stroke-linecurrentcap="round" stroke-linejoin="round"></g><g id="SVGRepo_icurrentColoronCarrier"> <path fill-rule="evenodd" currentclip-rule="evenodd" d="M10.9393 12L6.9696 15.9697L8.03026 17.0304L12 13.0607L15.9697 17.0304L17.0304 15.9697L13.0607 12L17.0303 8.03039L15.9696 6.96973L12 10.9393L8.03038 6.96973L6.96972 8.03039L10.9393 12Z" fill="currentColor"></path> </g></svg></span>取消</button>
+            <button id="confirmImportConfirm"><span class="v"><svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64px" height="64px" viewBox="0 0 335.765 335.765" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracurrentColorerCarrier" stroke-linecurrentcap="round" stroke-linejoin="round"></g><g id="SVGRepo_icurrentColoronCarrier"> <g> <g> <polygon points="311.757,41.803 107.573,245.96 23.986,162.364 0,186.393 107.573,293.962 335.765,65.795 "></polygon> </g> </g> </g></svg></span>確認新增</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="./js/main.js"></script>
+</body>
+
+</html>
